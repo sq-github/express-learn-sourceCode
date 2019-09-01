@@ -326,7 +326,7 @@
 
       ## 最后总结一下：
 
-
+![Image text](https://github.com/sq-github/express-learn-sourceCode/raw/master/imgs/img1.png)
 
 1、添加一个非路由中间和添加路由中间件都会产生一个layer，这个layer都是router的layer，不同的时，非路由中间件：layer.route = undefined;路由中间件：layer.route = route;
 
