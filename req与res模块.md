@@ -39,4 +39,38 @@ var res = Object.create(http.ServerResponse.prototype);
   })
 ~~~
 
-2. 在request.js与response.js文件中封装需要的各种方法。在express中是var req和res继承nodejs的对象原型，然后将新的方法加在了res与req的对象上。
+2. 在request.js与response.js文件中封装需要的各种方法。在express中是var req和res继承nodejs的对象原型，然后将新的方法加在了res与req的对象上。例如：
+
+   ~~~ javascript
+   res.json = function json(obj) {
+     var val = obj;
+   
+     // allow status / body
+     if (arguments.length === 2) {
+       // res.json(body, status) backwards compat
+       if (typeof arguments[1] === 'number') {
+         deprecate('res.json(obj, status): Use res.status(status).json(obj) instead');
+         this.statusCode = arguments[1];
+       } else {
+         deprecate('res.json(status, obj): Use res.status(status).json(obj) instead');
+         this.statusCode = arguments[0];
+         val = arguments[1];
+       }
+     }
+   
+     // settings
+     var app = this.app;
+     var escape = app.get('json escape')
+     var replacer = app.get('json replacer');
+     var spaces = app.get('json spaces');
+     var body = stringify(val, replacer, spaces, escape)
+   
+     // content-type
+     if (!this.get('Content-Type')) {
+       this.set('Content-Type', 'application/json');
+     }
+   
+     return this.send(body);
+   };
+   ~~~
+
